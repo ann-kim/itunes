@@ -10,25 +10,26 @@ app.service('itunesService', function($http, $q){
   //You can return the http request or you can make your own promise in order to manipulate the data before you resolve it.
 
     //Code here
-    this.getArtist = function(artist) {
+    this.getSong = function(artist) {
     	var dfd = $q.defer();
     	$http ({
     		method: 'JSONP',
     		url: 'https://itunes.apple.com/search?term=' + artist + '&callback=JSON_CALLBACK'
-    	}).then(function(response) {
-    		console.log(response);
-    		var artistInfo = response.data.results;
+    	}).then(function(res) {
+    		var artistInfo = res.data.results;
         var infoToDisplay = [];
-    		for (var i = 0; i < response.length; i++) {
-    			infoToDisplay.push(artistInfo[i].artistName);
-    			infoToDisplay.push(artistInfo[i].collectionName);
-    			infoToDisplay.push(artistInfo[i].artworkUrl100);
-    			infoToDisplay.push(artistInfo[i].type);
-    			infoToDisplay.push(artistInfo[i].collectionPrice);
-    			infoToDisplay.push(artistInfo[i].previewUrl);
+    		for (var i = 0; i < artistInfo.length; i++) {
+          var newObj = {
+            Play: artistInfo[i].previewUrl,
+    		  	Artist: artistInfo[i].artistName,
+    		  	Collection: artistInfo[i].collectionName,
+    		  	AlbumArt: artistInfo[i].artworkUrl100,
+    		  	Type: artistInfo[i].type,
+    		  	CollectionPrice: artistInfo[i].collectionPrice
+          };
+          infoToDisplay.push(newObj);
     		}
-    		console.log(infoToDisplay);
-    		dfd.resolve(artistInfo);
+    		dfd.resolve(infoToDisplay); //Like a return so we want the infoToDisplay array to show
     	})
     return dfd.promise;
     }
